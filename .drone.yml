@@ -153,6 +153,15 @@ pipeline:
       ref: refs/tags/v*
 
 
+  integration_tests:
+    <<: *integration_tests_common
+    image: centos:${OS_VERSION}
+    when:
+
+      event: [push, pull_request]
+
+      branch: [ integration, master, ci_*, pci_*, release_*, experimental* ]
+
 
   publish_ci_integration:
     <<: *publish_ci_common
