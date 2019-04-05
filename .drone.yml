@@ -55,6 +55,15 @@ publish_ci_common: &publish_ci_common
     - /buildcache:/buildcache
 
 
+integration_tests_common: &integration_tests_common
+  commands:
+    - if test "$${FORCED_OS_VERSION}" != ""; then if test "$${FORCED_OS_VERSION}" != "${OS_VERSION}"; then echo "step bypass"; exit 0; fi; fi
+    - if test "${DRONE_TAG}" = ""; then if ! test -f .drone_cache; then echo "step bypass"; exit 0; fi; fi
+
+    - yum -y localinstall metwork-mfext*.rpm
+    - /opt/metwork-mfext/bin/mfext_wrapper ./run_integration_tests.sh
+
+
 
 pipeline:
   bootstrap_integration_push:
@@ -116,6 +125,7 @@ pipeline:
     image: metwork/mfcom-${OS_VERSION}-buildimage:integration
     environment:
       - TARGET_DIR=master
+      - DEP_BRANCH=integration
     when:
 
       event: [push, pull_request]
@@ -126,6 +136,7 @@ pipeline:
     image: metwork/mfcom-${OS_VERSION}-buildimage:${DRONE_BRANCH}
     environment:
       - TARGET_DIR=${DRONE_BRANCH##release_}
+      - DEP_BRANCH=${DRONE_BRANCH}
     when:
 
       event: [ push, pull_request ]
@@ -136,6 +147,7 @@ pipeline:
     image: metwork/mfcom-${OS_VERSION}-buildimage:${DRONE_BRANCH}
     environment:
       - TARGET_DIR=${DRONE_BRANCH##release_}
+      - DEP_BRANCH=${DRONE_BRANCH}
     when:
       event: tag
       ref: refs/tags/v*
