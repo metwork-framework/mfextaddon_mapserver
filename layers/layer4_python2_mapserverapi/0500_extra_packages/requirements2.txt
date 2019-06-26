@@ -1,2 +1,2 @@
-certifi==2018.10.15
--e git+https://github.com/metwork-framework/mapserverapi_python.git@86fdc50f9d4ae3b26b5caec89cded9c0bb23a7d7#egg=mapserverapi
+certifi==2019.3.9
+-e git+https://github.com/metwork-framework/mapserverapi_python.git@d4b44f7469cc685f08f3dc536c6ff628721be047#egg=mapserverapi
