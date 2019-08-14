@@ -8,6 +8,7 @@ export CHECKTYPE=MD5
 export CHECKSUM=0dc976c88a5eb5e701a95aced5c5e3f4
 DESCRIPTION=\
 tiny C library to invoke mapserver engine as a library
+WEBSITE=https://github.com/metwork-framework/mapserverapi
 LICENSE=BSD
 
 all::$(PREFIX)/lib/libmapserverapi.so
