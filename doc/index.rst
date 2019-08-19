@@ -9,7 +9,6 @@ MFEXT MapServer Addon documentation
 
    mfextaddon_mapserver_intro
    mfextaddon_mapserverapi_tutorial
-   layer_root
    layer_mapserver
    layer_python2_mapserverapi
    layer_python3_mapserverapi
