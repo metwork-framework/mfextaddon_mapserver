@@ -2,8 +2,6 @@ import mapserverapi as mapserver
 
 
 def get_mapfile_content(mapfile_path):
-    with open(mapfile_path, 'r') as file:
-        data = file.read().replace('\n', '')
     with open(mapfile_path, 'r') as mapfile:
         mapfile_content = mapfile.read()
 
