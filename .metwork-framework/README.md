@@ -27,7 +27,7 @@ So, to install this add-on, you have to install:
 
 $ ##### As root user #####
 
-$ # We install the Python3 enabled version of VIM
+$ # We install the Python3 enabled version of mapserverapi
 $ yum -y install metwork-mfext-layer-python3_mapserverapi
 
 
