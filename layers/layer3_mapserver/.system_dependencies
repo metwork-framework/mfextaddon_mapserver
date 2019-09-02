@@ -1,2 +1,4 @@
 libpixman-1.so.0()(64bit)@generic
+libXrender.so.1()(64bit)@generic
 pixman@centos6,centos7
+libXrender@centos6,centos7
