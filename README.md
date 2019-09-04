@@ -1,5 +1,5 @@
 [![logo](https://raw.githubusercontent.com/metwork-framework/resources/master/logos/metwork-white-logo-small.png)](http://www.metwork-framework.org)
-# mfextaddon_mapserver
+#  mfextaddon_mapserver
 
 [//]: # (automatically generated from https://github.com/metwork-framework/resources/blob/master/cookiecutter/_%7B%7Bcookiecutter.repo%7D%7D/README.md)
 
@@ -13,16 +13,26 @@
 [![Gitter](https://github.com/metwork-framework/resources/blob/master/badges/community-fr.svg)](https://gitter.im/metwork-framework/community-fr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
-[//]: # (TABLE_OF_CONTENTS_PLACEHOLDER)
+**Table of contents**
 
-## What is it?
+* [1\. What is it?](#1-what-is-it)
+* [2\. Provided layers](#2-provided-layers)
+* [3\. Provides packages](#3-provides-packages)
+* [4\. Quickstart](#4-quickstart)
+* [5\. Contributing guide](#5-contributing-guide)
+* [6\. Code of Conduct](#6-code-of-conduct)
+* [7\. Sponsors](#7-sponsors)
+
+
+
+## 1. What is it?
 
 This module is a [mfext](https://github.com/metwork-framework/mfext) add-on which
 provides [Mapserver](https://mapserver.org) software and libraries around 
 ([mapserverapi](https://github.com/metwork-framework/mapserverapi) and 
 [mapserverapi_python](https://github.com/metwork-framework/mapserverapi_python)).
 
-## Provided layers
+## 2. Provided layers
 
 This add-on provides three layers:
 
@@ -30,7 +40,7 @@ This add-on provides three layers:
 - `python3_mapserverapi@mfext` (the Python3 version of mapserverapi_python library)
 - `python2_mapserverapi@mfext` (the Python2 version of mapserverapi_python library)
 
-## Provides packages
+## 3. Provides packages
 
 So, to install this add-on, you have to install:
 
@@ -38,7 +48,7 @@ So, to install this add-on, you have to install:
 - (and/or) `metwork-mfext-layer-python2_mapserverapi` package
 - (and/or) `metwork-mfext-layer-python3_mapserverapi` package
 
-## Quickstart
+## 4. Quickstart
 
 ```console
 
@@ -73,19 +83,19 @@ $ python
 
 
 
-## Contributing guide
+## 5. Contributing guide
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 
 
-## Code of Conduct
+## 6. Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) file.
 
 
 
-## Sponsors
+## 7. Sponsors
 
 *(If you are officially paid to work on MetWork Framework, please contact us to add your company logo here!)*
 
