@@ -4,7 +4,7 @@
 
 export PATH=${PATH}:${PWD}/..
 RET=0
-
+FIC_DEPS=`pwd`/deps
 
 cd "${MFEXT_HOME}" || exit 1
 cd opt
@@ -16,8 +16,8 @@ for layer in `ls`; do
             echo
             echo "=== Suspicious dependencies layer ${layer} ==="
             echo
-            external_dependencies.sh >deps
-            for F in $(cat deps); do
+            external_dependencies.sh >${FIC_DEPS}
+            for F in $(cat ${FIC_DEPS}); do
                 N=$(ldd "${F}" 2>/dev/null |grep -c metwork)
                 if test "$N" -gt 0; then
                     echo "***** $F *****"
@@ -39,7 +39,7 @@ done
 
 
 
-rm -f deps
+rm -f ${FIC_DEPS}
 if test "${RET}" = "1"; then
     echo "suspicious dependencies found"
     #exit 1
