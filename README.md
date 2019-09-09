@@ -19,9 +19,10 @@
 * [2\. Provided layers](#2-provided-layers)
 * [3\. Provides packages](#3-provides-packages)
 * [4\. Quickstart](#4-quickstart)
-* [5\. Contributing guide](#5-contributing-guide)
-* [6\. Code of Conduct](#6-code-of-conduct)
-* [7\. Sponsors](#7-sponsors)
+* [5\. Full list of components](#5-full-list-of-components)
+* [6\. Contributing guide](#6-contributing-guide)
+* [7\. Code of Conduct](#7-code-of-conduct)
+* [8\. Sponsors](#8-sponsors)
 
 
 
@@ -83,19 +84,41 @@ $ python
 
 
 
-## 5. Contributing guide
+
+
+
+## 5. Full list of components
+
+| Name | Version | Layer |
+| --- | --- | --- |
+| [certifi](https://certifi.io/) | 2019.3.9 | :ref:`python2_mapserverapi <layer_python2_mapserverapi>` |
+| [certifi](https://certifi.io/) | 2019.3.9 | :ref:`python3_mapserverapi <layer_python3_mapserverapi>` |
+| [mapserver](http://mapserver.org) | 7.2.1 | :ref:`mapserver <layer_mapserver>` |
+| [mapserverapi](https://github.com/metwork-framework/mapserverapi) | 0.1.3 | :ref:`mapserver <layer_mapserver>` |
+| [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | :ref:`python2_mapserverapi <layer_python2_mapserverapi>` |
+| [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | :ref:`python3_mapserverapi <layer_python3_mapserverapi>` |
+
+*(260 components)*
+
+
+
+
+
+
+
+## 6. Contributing guide
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 
 
-## 6. Code of Conduct
+## 7. Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) file.
 
 
 
-## 7. Sponsors
+## 8. Sponsors
 
 *(If you are officially paid to work on MetWork Framework, please contact us to add your company logo here!)*
 
