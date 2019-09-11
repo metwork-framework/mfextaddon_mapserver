@@ -16,4 +16,13 @@ doc/layer_scientific.rst
 doc/mfextaddon_scientific_intro.rst
 doc/CHANGELOG*.md
 doc/CHANGELOG*.rst
-doc/changelogs.rst 
+doc/layer_mapserver.rst
+doc/changelogs.rst
+doc/layer_python2_mapserverapi.rst
+doc/layer_python3_mapserverapi.rst
+doc/mfextaddon_mapserver_intro.rst
+doc/mfextaddon_mapserverapi_tutorial.rst
+doc/README.md
+doc/README.rst
+doc/components.md
+doc/components.rst

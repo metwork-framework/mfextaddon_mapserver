@@ -4,14 +4,13 @@ MFEXT MapServer Addon documentation
 .. toctree::
    :numbered:
    :caption: Table of Contents
-   :name: mfextaddon_scientifictoc
+   :name: mfextaddon_mapservertoc
    :maxdepth: 3
 
-   mfextaddon_mapserver_intro
+   README
    mfextaddon_mapserverapi_tutorial
-   layer_mapserver
-   layer_python2_mapserverapi
-   layer_python3_mapserverapi
+   installation_guide
+   layers
    changelogs
 
 Indices and tables
