@@ -20,7 +20,7 @@
 * [3\. Provides packages](#3-provides-packages)
 * [4\. Quickstart](#4-quickstart)
 * [5\. Full list of components](#5-full-list-of-components)
-* [6\.  Cheatsheet](#6-cheatsheet)
+* [6\. Cheatsheet](#6-cheatsheet)
 * [7\. Reference documentation](#7-reference-documentation)
 * [8\. Installation guide](#8-installation-guide)
 * [9\. Configuration guide](#9-configuration-guide)
@@ -111,7 +111,7 @@ $ python
 
 
 
-## 6.  Cheatsheet
+## 6. Cheatsheet
 
 A cheatsheet for this module is available [here](.metwork-framework/cheatsheet.md)
 
