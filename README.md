@@ -20,13 +20,12 @@
 * [3\. Provides packages](#3-provides-packages)
 * [4\. Quickstart](#4-quickstart)
 * [5\. Full list of components](#5-full-list-of-components)
-* [6\. Cheatsheet](#6-cheatsheet)
-* [7\. Reference documentation](#7-reference-documentation)
-* [8\. Installation guide](#8-installation-guide)
-* [9\. Configuration guide](#9-configuration-guide)
-* [10\. Contributing guide](#10-contributing-guide)
-* [11\. Code of Conduct](#11-code-of-conduct)
-* [12\. Sponsors](#12-sponsors)
+* [6\. Reference documentation](#6-reference-documentation)
+* [7\. Installation guide](#7-installation-guide)
+* [8\. Configuration guide](#8-configuration-guide)
+* [9\. Contributing guide](#9-contributing-guide)
+* [10\. Code of Conduct](#10-code-of-conduct)
+* [11\. Sponsors](#11-sponsors)
 
 
 
@@ -111,11 +110,9 @@ $ python
 
 
 
-## 6. Cheatsheet
 
-A cheatsheet for this module is available [here](.metwork-framework/cheatsheet.md)
 
-## 7. Reference documentation
+## 6. Reference documentation
 
 - (for **master (development)** version), see [this dedicated site](http://metwork-framework.org/pub/metwork/continuous_integration/docs/master/mfextaddon_mapserver/) for reference documentation.
 - (for **latest released stable** version), see [this dedicated site](http://metwork-framework.org/pub/metwork/releases/docs/stable/mfextaddon_mapserver/) for reference documentation.
@@ -127,30 +124,30 @@ And if you are looking for an old released version, you can search [here](http:/
 
 
 
-## 8. Installation guide
+## 7. Installation guide
 
 See [this document](.metwork-framework/install_a_metwork_package.md).
 
 
-## 9. Configuration guide
+## 8. Configuration guide
 
 See [this document](.metwork-framework/configure_a_metwork_package.md).
 
 
 
-## 10. Contributing guide
+## 9. Contributing guide
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 
 
-## 11. Code of Conduct
+## 10. Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) file.
 
 
 
-## 12. Sponsors
+## 11. Sponsors
 
 *(If you are officially paid to work on MetWork Framework, please contact us to add your company logo here!)*
 
