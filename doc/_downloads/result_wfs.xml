@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ows:ExceptionReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ows="http://www.opengis.net/ows/1.1" version="2.0.0" xml:lang="en-US" xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd">
-  <ows:Exception exceptionCode="NoApplicableCode" locator="mapserv">
-    <ows:ExceptionText>msOGRFileOpen(): OGR error. Open failed for OGR connection in layer `land'.  File not found or unsupported format. Check server logs.
-msDrawMap(): Image handling error. Failed to draw layer named 'ocean'.
-msOGRFileOpen(): OGR error. Open failed for OGR connection in layer `ocean'.  File not found or unsupported format. Check server logs.</ows:ExceptionText>
-  </ows:Exception>
-</ows:ExceptionReport>
