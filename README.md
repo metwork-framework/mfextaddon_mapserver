@@ -90,13 +90,14 @@ $ python
 
 
 
+
 ## 5. Full list of components
 
 | Name | Version | Layer |
 | --- | --- | --- |
 | [certifi](https://certifi.io/) | 2019.3.9 | python2_mapserverapi |
 | [certifi](https://certifi.io/) | 2019.3.9 | python3_mapserverapi |
-| [mapserver](http://mapserver.org) | 7.2.1 | mapserver |
+| [mapserver](http://mapserver.org) | 7.4.2 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi) | 0.1.3 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | python2_mapserverapi |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | python3_mapserverapi |
@@ -132,6 +133,8 @@ See [this document](.metwork-framework/install_a_metwork_package.md).
 ## 8. Configuration guide
 
 See [this document](.metwork-framework/configure_a_metwork_package.md).
+
+
 
 
 
