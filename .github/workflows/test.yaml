@@ -1,0 +1,55 @@
+name: test
+
+on:
+  push: {}
+
+env:
+    TARGET_DIR: master
+    BUILDCACHE: /buildcache
+    OS_VERSION: centos6
+    MFMODULE: MFEXT
+    MFMODULE_LOWERCASE: mfext
+    MFBUILD: mfxxx
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v /buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
+    WORKFLOW_SCRIPTS_DIR: .github/workflows
+    DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: compute reference branch
+        id: refrence_branch
+        run: |
+          ${WORKFLOW_SCRIPTS_DIR}/reference_branch.sh
+      - name: debug env
+        run: |
+          env
+      - name: bootstrap
+        run: |
+          BUILDIMAGE=${{ steps.refrence_branch.outputs.buildimage }}
+          docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
+      - name: build
+        run: |
+          BUILDIMAGE=${{ steps.refrence_branch.outputs.buildimage }}
+          REF_BRANCH=${{ steps.refrence_branch.outputs.refbranch }}
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+      - name: buildlog publish 1
+        uses: appleboy/ssh-action@master
+        env:
+          REF: ${{ github.ref }}
+          REPO: ${{ github.repository }}
+          RUN_NB: ${{ github.run_number }}
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          username: ${{ secrets.PUB_USERNAME }}
+          password: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          envs: REF,REPO,RUN_NB,OS_VERSION
+          script: |
+            BRANCH=${REF#refs/heads/}
+            REPOSITORY=${REPO#metwork-framework/}
+            mkdir -p /pub/metwork/continuous_integration/buildlogs/${BRANCH}/${REPOSITORY}/${OS_VERSION}/${RUN_NB}
+          
