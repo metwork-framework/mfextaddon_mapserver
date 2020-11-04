@@ -14,6 +14,7 @@ if test "${MFBUILD:-}" = ""; then
     exit 1
 fi
 
+R=${GITHUB_REPOSITORY#metwork-framework/}
 B=${GITHUB_REF#refs/heads/}
 case "${GITHUB_REF}" in
     refs/heads/experimental* | refs/heads/master | refs/heads/release_*)
@@ -24,3 +25,4 @@ esac
 
 echo "::set-output name=refbranch::${REF_BRANCH}"
 echo "::set-output name=buildimage::metwork/${MFBUILD}-${OS_VERSION}-buildimage:${REF_BRANCH}"
+echo "::set-output name=buildlog_dir::/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}"
