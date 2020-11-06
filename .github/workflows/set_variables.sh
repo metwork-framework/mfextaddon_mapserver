@@ -25,4 +25,5 @@ esac
 
 echo "::set-output name=refbranch::${REF_BRANCH}"
 echo "::set-output name=buildimage::metwork/${MFBUILD}-${OS_VERSION}-buildimage:${REF_BRANCH}"
+echo "::set-output name=testimage::metwork/${MFBUILD}-${OS_VERSION}-testimage:${REF_BRANCH}"
 echo "::set-output name=buildlog_dir::/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}"

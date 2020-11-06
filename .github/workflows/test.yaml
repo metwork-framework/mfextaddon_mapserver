@@ -56,3 +56,8 @@ jobs:
           host: ${{ secrets.PUB_HOST }}
           username: ${{ secrets.PUB_USERNAME }}
           password: ${{ secrets.PUB_PASSWORD }}
+      - name: integration tests
+        run: |
+          TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
+          REF_BRANCH=${{ steps.SetVariables.outputs.refbranch }}
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
