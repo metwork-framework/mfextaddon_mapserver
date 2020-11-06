@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: set variables
         id: SetVariables
         run: |
