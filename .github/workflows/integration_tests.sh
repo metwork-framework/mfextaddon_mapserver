@@ -2,8 +2,8 @@
 
 set -eu
 
-cd /src
-ls -l *.rpm
+cd /src/rpms
+ls -l
 
 echo -e "[metwork_${BRANCH}]" >/etc/yum.repos.d/metwork.repo
 echo -e "name=Metwork Continuous Integration Branch ${BRANCH}" >> /etc/yum.repos.d/metwork.repo

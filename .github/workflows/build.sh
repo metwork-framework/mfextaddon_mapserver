@@ -9,10 +9,12 @@ yum install -y metwork-mfext-layer-python2-${BRANCH##release_}
 
 cd /src
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
-MAKE_LOG="/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}/make.log"
 
-mkdir -p "$(dirname "${MAKE_LOG}")"
-make >"${MAKE_LOG}" 2>&1 || ( tail -200 "${MAKE_LOG}" ; exit 1 )
+export DRONE_BRANCH=${B}
+export DRONE=true
+
+mkdir -p "${BUILDLOG}"
+make >"${BUILDLOG}/make.log" 2>&1 || ( tail -200 "${BUILDLOG}/make.log" ; exit 1 )
 OUTPUT=$(git status --short)
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
@@ -20,13 +22,14 @@ if test "${OUTPUT}" != ""; then
     git diff
     exit 1
 fi
-MAKE_DOC="/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}/make_doc.log"
-if test -d docs; then make docs >"${MAKE_DOC}" 2>&1 || ( tail -200 "${MAKE_DOC}" ; exit 1 ); fi
-if test -d doc; then make doc >"${MAKE_DOC}" 2>&1 || ( tail -200 "${MAKE_DOC}" ; exit 1 ); fi
+if test -d docs; then make docs >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
+if test -d doc; then make doc >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
 rm -Rf html_doc
 if test -d /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc; then cp -Rf /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc . ; fi
-MAKE_TEST="/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}/make_test.log"
-make test >"${MAKE_TEST}" 2>&1 || ( tail -200 "${MAKE_TEST}" ; exit 1 )
-MAKE_RPM="/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}/make_rpm.log"
-make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >"${MAKE_RPM}" 2>&1 || ( tail -200 "${MAKE_RPM}" ; exit 1 )
-mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm .
+make test >"${BUILDLOG}/make_test.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_test.log" ; exit 1 )
+make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >"${BUILDLOG}/make_rpm.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_rpm.log" ; exit 1 )
+
+mkdir rpms
+mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
+mkdir buildlogs
+mv ${BUILDLOG}/make*.log  buildlogs
