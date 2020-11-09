@@ -4,7 +4,6 @@ on:
   push: {}
 
 env:
-    TARGET_DIR: master
     BUILDCACHE: /buildcache
     OS_VERSION: centos6
     MFMODULE: MFEXT
@@ -32,12 +31,14 @@ jobs:
           env
       - name: bootstrap
         run: |
+          export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: build
         run: |
+          export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
+          REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
-          REF_BRANCH=${{ steps.SetVariables.outputs.refbranch }}
           BUILDLOG_DIR=${{ steps.SetVariables.outputs.buildlog_dir }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} -e BUILDLOG=${BUILDLOG_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: publish buildlogs
@@ -57,7 +58,7 @@ jobs:
       - name: integration tests
         run: |
           TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
-          REF_BRANCH=${{ steps.SetVariables.outputs.refbranch }}
+          REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
