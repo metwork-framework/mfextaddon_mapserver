@@ -1,7 +1,7 @@
 name: test
 
 on:
-  push: {}
+  [push, pull_request]
 
 env:
     BUILDCACHE: /buildcache
@@ -61,6 +61,7 @@ jobs:
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
+        if: ${{ github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
