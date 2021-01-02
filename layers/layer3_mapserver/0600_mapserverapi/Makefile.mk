@@ -2,10 +2,10 @@ include ../../../adm/root.mk
 include $(MFEXT_HOME)/share/package.mk
 
 export NAME=mapserverapi
-export VERSION=0.1.5
+export VERSION=0.1.6
 export EXTENSION=tar.gz
 export CHECKTYPE=MD5
-export CHECKSUM=2156883fa301113c61350fb31ebbceb8
+export CHECKSUM=9b997553af735a4a127871cc052c7ce6
 DESCRIPTION=\
 tiny C library to invoke mapserver engine as a library
 WEBSITE=https://github.com/metwork-framework/mapserverapi
