@@ -10,6 +10,8 @@ MAP
             "wms_onlineresource"  "http://demo.mapserver.org/cgi-bin/mapserv7?"
             "wms_srs"             "EPSG:4326"
             "ows_enable_request"  "*"
+            "wfs_onlineresource"  "https://demo.mapserver.org/cgi-bin/mapserv/wfs?"
+            "wfs_enable_request"  "*"
         END
     END
     PROJECTION
@@ -25,6 +27,7 @@ MAP
         END
         DATA '{DATAPATH}/ne_110m_land'
         CLASS
+            NAME "ne_110m_land"
             STYLE
                 COLOR 238 236 223
                 OUTLINECOLOR 255 255 0
@@ -42,6 +45,7 @@ MAP
         END
         DATA '{DATAPATH}/ne_110m_ocean'
         CLASS
+            NAME "ne_110m_ocean"
             STYLE
                 COLOR 198 226 242
             END
