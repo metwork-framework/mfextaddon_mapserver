@@ -41,6 +41,15 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           BUILDLOG_DIR=${{ steps.SetVariables.outputs.buildlog_dir }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${REF_BRANCH} -e BUILDLOG=${BUILDLOG_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+      - name : check ssh connect as ssh-scp-ssh-pipelines does not do it
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          username: ${{ secrets.PUB_USERNAME }}
+          password: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          script: |
+            pwd
       - name: publish buildlogs
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
