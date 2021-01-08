@@ -86,3 +86,19 @@ jobs:
             '${LOCAL}/metwork-*.rpm' => ${REMOTE}
           last_ssh: |
             createrepo ${REMOTE} 
+      - name: publish doc
+        if: ${{ github.event_name == 'push' }}
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        env:
+          REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
+          LOCAL: ${{ github.workspace }}/html_doc
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          user: ${{ secrets.PUB_USERNAME }}
+          pass: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          first_ssh: |
+            rm -rf ${REMOTE}
+            mkdir -p ${REMOTE}
+          scp: |
+            '${LOCAL}/*' => ${REMOTE}
