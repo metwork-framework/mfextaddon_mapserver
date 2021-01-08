@@ -1,7 +1,10 @@
 name: test
 
 on:
-  [push, pull_request]
+  push:
+  pull_request:
+  repository_dispatch:
+    types: metwork-trigger
 
 env:
     BUILDCACHE: /buildcache
@@ -21,6 +24,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{ github.event.client_payload.branch || github.ref }}
       - name: set variables
         id: SetVariables
         run: |
