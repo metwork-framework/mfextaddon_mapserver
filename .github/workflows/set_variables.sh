@@ -15,7 +15,11 @@ if test "${MFBUILD:-}" = ""; then
 fi
 
 R=${GITHUB_REPOSITORY#metwork-framework/}
-B=${GITHUB_REF#refs/heads/}
+if [ "${PAYLOAD_BRANCH}" == "" ];then
+  B=${GITHUB_REF#refs/heads/}
+else
+  B=${PAYLOAD_BRANCH}
+fi
 case "${GITHUB_REF}" in
     refs/heads/experimental* | refs/heads/master | refs/heads/release_*)
         REF_BRANCH=${B}
@@ -25,6 +29,7 @@ case "${GITHUB_REF}" in
         TARGET_DIR=master;;
 esac
 
+echo "::set-output name=branch::${B}"
 echo "::set-output name=ref_branch::${REF_BRANCH}"
 echo "::set-output name=target_dir::${TARGET_DIR}"
 echo "::set-output name=buildimage::metwork/${MFBUILD}-${OS_VERSION}-buildimage:${REF_BRANCH}"

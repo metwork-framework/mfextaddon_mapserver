@@ -2,15 +2,12 @@
 
 set -eu
 
-B=${GITHUB_REF#refs/heads/}
-R=${GITHUB_REPOSITORY#metwork-framework/}
-
-yum install -y metwork-mfext-layer-python2-${BRANCH##release_}
+yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
 cd /src
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
-export DRONE_BRANCH=${B}
+export DRONE_BRANCH=${BRANCH}
 export DRONE=true
 
 mkdir -p "${BUILDLOG}"
