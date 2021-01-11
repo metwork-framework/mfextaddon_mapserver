@@ -34,19 +34,10 @@ jobs:
       - name: debug env
         run: |
           env
-      - name: cache buildimage
-        uses: whoan/docker-build-with-cache-action@v5
-        with:
-          image_name: ${{ steps.SetVariables.outputs.buildimage }}
-          image_tag: ${{ steps.SetVariables.outputs.ref_branch }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          stages_image_name: ${{ steps.SetVariables.outputs.buildimage }}
-          push_image_and_stages: false
       - name: bootstrap
         run: |
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
-          BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}:${{ steps.SetVariables.outputs.ref_branch }}
+          BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: build
         run: |
