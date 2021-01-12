@@ -7,6 +7,7 @@ yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 
 export DRONE_BRANCH=${BRANCH}
+export DRONE_TAG=""
 export DRONE=true
 
 cd /src
@@ -25,7 +26,12 @@ MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>mod
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
 echo "$${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
-if test -f "$${BUILDCACHE}/build_hash_`cat .build_hash`"; then echo "next bypass"; touch .drone_downstream_bypass; exit 0; fi
+if test -f "$${BUILDCACHE}/build_hash_`cat .build_hash`"; then
+    echo "next bypass"
+    touch .drone_downstream_bypass
+    echo "::set-output name=bypass::true"
+    exit 0
+fi
 
 if test -d docs; then make docs >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
 if test -d doc; then make doc >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
@@ -38,3 +44,5 @@ mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 mkdir buildlogs
 mv ${BUILDLOG}/make*.log  buildlogs
+
+echo "::set-output name=bypass::false"

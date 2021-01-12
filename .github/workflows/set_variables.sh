@@ -29,8 +29,6 @@ case "${GITHUB_REF}" in
         TARGET_DIR=master;;
 esac
 
-mkdir -p ${BUILDCACHE}
-
 echo "::set-output name=branch::${B}"
 echo "::set-output name=ref_branch::${REF_BRANCH}"
 echo "::set-output name=repository::${R}"
