@@ -29,8 +29,11 @@ case "${GITHUB_REF}" in
         TARGET_DIR=master;;
 esac
 
+mkdir -p ${BUILDCACHE}
+
 echo "::set-output name=branch::${B}"
 echo "::set-output name=ref_branch::${REF_BRANCH}"
+echo "::set-output name=repository::${R}"
 echo "::set-output name=target_dir::${TARGET_DIR}"
 echo "::set-output name=buildimage::metwork/${MFBUILD}-${OS_VERSION}-buildimage:${REF_BRANCH}"
 echo "::set-output name=testimage::metwork/${MFBUILD}-${OS_VERSION}-testimage:${REF_BRANCH}"

@@ -7,12 +7,12 @@ on:
     types: metwork-trigger
 
 env:
-    BUILDCACHE: /buildcache
+    BUILDCACHE: /tmp/buildcache
     OS_VERSION: centos6
     MFMODULE: MFEXT
     MFMODULE_LOWERCASE: mfext
     MFBUILD: mfxxx
-    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v /buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v /tmp/buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
     WORKFLOW_SCRIPTS_DIR: .github/workflows
     DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
     PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
@@ -39,6 +39,13 @@ jobs:
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
+      - name: buildcache
+        uses: actions/cache@v2
+        env:
+          cache-name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+        with:
+          path: /tmp/buildcache
+          key: ${{ env.cache-name }}-${{ hashFiles('*') }}
       - name: build
         run: |
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
@@ -47,6 +54,7 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           BUILDLOG_DIR=${{ steps.SetVariables.outputs.buildlog_dir }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e BUILDLOG=${BUILDLOG_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+          ls -l ${BUILDCACHE}
       - name : check ssh connect as ssh-scp-ssh-pipelines does not do it
         uses: appleboy/ssh-action@master
         with:
