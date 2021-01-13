@@ -30,7 +30,6 @@ jobs:
         id: SetVariables
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
-          mkdir -p /buildcache
           pwd
           cd ~
           pwd
