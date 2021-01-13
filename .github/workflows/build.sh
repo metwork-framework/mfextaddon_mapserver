@@ -4,6 +4,8 @@ set -eu
 
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
+ls -l /src
+
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 
 export DRONE_BRANCH=${BRANCH}
@@ -11,13 +13,15 @@ export DRONE_TAG=""
 export DRONE=true
 
 cd /src
+
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
-mkdir /tmp/buildlogs
-export BUILDLOGS=/tmp/buildlogs
+mkdir -p buildlogs
+export BUILDLOGS=buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
-OUTPUT=$(git status --short)
+git status --short
+OUTPUT=$(git status --short | grep -v buildlogs | grep -v buildcache)
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
     echo "git diff output"
@@ -42,8 +46,6 @@ if test -d /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc; then cp -R
 make test >${BUILDLOGS}/make_test.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_test.log ; exit 1 )
 make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_rpm.log ; exit 1 )
 
-mkdir buildlogs
-mv /tmp/buildlogs/* buildlogs
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
