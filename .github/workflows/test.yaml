@@ -7,12 +7,12 @@ on:
     types: metwork-trigger
 
 env:
-    BUILDCACHE: /buildcache
+    BUILDCACHE: ~/buildcache
     OS_VERSION: centos6
     MFMODULE: MFEXT
     MFMODULE_LOWERCASE: mfext
     MFBUILD: mfxxx
-    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v /buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ~/buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
     WORKFLOW_SCRIPTS_DIR: .github/workflows
     DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
     PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
@@ -31,8 +31,11 @@ jobs:
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           pwd
+          echo ${{ github.workspace }}
+          ls -l ${{ github.workspace }}
           cd ~
           pwd
+          gabuzomeu
       - name: debug env
         run: |
           env
