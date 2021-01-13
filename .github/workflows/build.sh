@@ -6,6 +6,8 @@ yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 
+ls -l /buildcache
+
 export DRONE_BRANCH=${BRANCH}
 export DRONE_TAG=""
 export DRONE=true
@@ -55,10 +57,7 @@ make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || (
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
-touch buildcache/build_hash_`cat .build_hash`
-
-ls -l /buildcache
-ls -l buildcache
+echo cached > buildcache/build_hash_`cat .build_hash`
 
 echo "::set-output name=bypass::false"
 
