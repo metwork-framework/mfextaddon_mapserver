@@ -44,7 +44,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/buildcache
           key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('*') }}
-          restore_keys: |
+          restore-keys: |
             buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
       - name: build
         id: BuildStep
