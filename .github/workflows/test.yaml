@@ -41,23 +41,34 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: buildcache
         uses: actions/cache@v2
+        id: cache-id
         with:
-          path: ${{ github.workspace }}/buildcache
-          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('*') }}
-          restore-keys: |
-            buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
+          path: ${{ runner.temp }}/buildcache
+          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+      - name: install buildcache for build
+        run: |
+          ls -l ${{ runner.temp }}/buildcache
+          export CACHED_BUILDCACHE=${{ runner.temp }}/buildcache
+          ${WORKFLOW_SCRIPTS_DIR}/install_buildcache.sh
+          ls -l ${BUILDCACHE}
       - name: build
         id: BuildStep
         run: |
-          mkdir -p ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
           ls -l ${BUILDCACHE}
-      - name: check bypass
+      - name: save buildcache
+        uses: airvzxf/cache-anything-new-action@v1.0.1
+        with:
+          script: 'new_cached_files.sh'
+          is_cached: ${{ steps.cache-id.outputs.cache-hit }}
+          cache: ${{ runner.temp }}/buildcache
+      - name: checks
         run: |
+          ls -l ${BUILDCACHE}
           echo "bypass = " ${{ steps.BuildStep.outputs.bypass }}
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
