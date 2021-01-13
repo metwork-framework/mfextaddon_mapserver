@@ -21,7 +21,7 @@ export BUILDLOGS=buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 git status --short
-OUTPUT=$(git status --short | grep -v buildlogs | grep -v buildcache)
+OUTPUT=$(git status --short) | grep -v buildlogs | grep -v buildcache
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
     echo "git diff output"
