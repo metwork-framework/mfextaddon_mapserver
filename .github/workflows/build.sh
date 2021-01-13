@@ -4,9 +4,6 @@ set -eu
 
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
-ls -l /src
-ls -l /buildcache
-
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 
 export DRONE_BRANCH=${BRANCH}
