@@ -14,7 +14,7 @@ cd /src
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
 mkdir /tmp/buildlogs
-export BUILDLOGS="/tmp/buildlogs
+export BUILDLOGS=/tmp/buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 OUTPUT=$(git status --short)

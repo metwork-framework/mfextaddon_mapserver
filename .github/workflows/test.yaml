@@ -7,12 +7,12 @@ on:
     types: metwork-trigger
 
 env:
-    BUILDCACHE: ${{ github.workspace }}/buildcache
+    BUILDCACHE: ${{ github.workspace }}/../buildcache
     OS_VERSION: centos6
     MFMODULE: MFEXT
     MFMODULE_LOWERCASE: mfext
     MFBUILD: mfxxx
-    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ${{ github.workspace }}/buildcache:/buildcache -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e OS_VERSION"
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ${{ github.workspace }}/../buildcache:/buildcache -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e OS_VERSION"
     WORKFLOW_SCRIPTS_DIR: .github/workflows
     DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
     PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
@@ -41,7 +41,7 @@ jobs:
       - name: buildcache
         uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/buildcache
+          path: ${{ github.workspace }}/../buildcache
           key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
       - name: build
         id: BuildStep
