@@ -5,6 +5,7 @@ set -eu
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
 ls -l /src
+ls -l /buildcache
 
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 
@@ -21,7 +22,7 @@ export BUILDLOGS=buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 
-mv buildlogs /tmp/
+mv buildlogs /tmp
 mv buildcache /tmp
 
 git status --short
@@ -31,7 +32,7 @@ if test "${OUTPUT}" != ""; then
     echo "git diff output"
     git diff
     exit 1
-f
+fi
 
 mv /tmp/buildlogs .
 mv /tmp/buildcache .
@@ -57,4 +58,7 @@ make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || (
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
+ls -l /buildcache
+
 echo "::set-output name=bypass::false"
+
