@@ -20,14 +20,22 @@ mkdir -p buildlogs
 export BUILDLOGS=buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
+
+mv buildlogs /tmp/
+mv buildcache /tmp
+
 git status --short
-OUTPUT=$(git status --short) | grep -v buildlogs | grep -v buildcache
+OUTPUT=$(git status --short)
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
     echo "git diff output"
     git diff
     exit 1
-fi
+f
+
+mv /tmp/buildlogs .
+mv /tmp/buildcache .
+
 MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>module_hash.debug`
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
