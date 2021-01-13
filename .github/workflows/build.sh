@@ -4,6 +4,8 @@ set -eu
 
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
+if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
+
 export DRONE_BRANCH=${BRANCH}
 export DRONE_TAG=""
 export DRONE=true
@@ -11,9 +13,10 @@ export DRONE=true
 cd /src
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
-mkdir ../buildlogs
+mkdir /tmp/buildlogs
+export BUILDLOGS="/tmp/buildlogs
 
-make >../buildlogs/make.log 2>&1 || ( tail -200 ../buildlogs/make.log ; exit 1 )
+make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 OUTPUT=$(git status --short)
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
@@ -32,14 +35,16 @@ if test -f "/buildcache/build_hash_`cat .build_hash`"; then
     exit 0
 fi
 
-if test -d docs; then make docs >../buildlogs/make_doc.log 2>&1 || ( tail -200 ../buildlogs/make_doc.log ; exit 1 ); fi
-if test -d doc; then make doc >../buildlogs/make_doc.log 2>&1 || ( tail -200 ../buildlogs/make_doc.log ; exit 1 ); fi
+if test -d docs; then make docs >${BUILDLOGS}/make_doc.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_doc.log ; exit 1 ); fi
+if test -d doc; then make doc >${BUILDLOGS}/make_doc.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_doc.log ; exit 1 ); fi
 rm -Rf html_doc
 if test -d /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc; then cp -Rf /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc . ; fi
-make test >../buildlogs/make_test.log 2>&1 || ( tail -200 ../buildlogs/make_test.log ; exit 1 )
-make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >../buildlogs/make_rpm.log 2>&1 || ( tail -200 ../buildlogs/make_rpm.log ; exit 1 )
+make test >${BUILDLOGS}/make_test.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_test.log ; exit 1 )
+make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || ( tail -200 ${BUILDLOGS}/make_rpm.log ; exit 1 )
 
-mkdir ../rpms
-mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm ../rpms
+mkdir buildlogs
+mv /tmp/buildlogs/* buildlogs
+mkdir rpms
+mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
 echo "::set-output name=bypass::false"
