@@ -30,6 +30,7 @@ jobs:
         id: SetVariables
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
+          mkdir -p ${BUILDCACHE}
       - name: debug env
         run: |
           env
