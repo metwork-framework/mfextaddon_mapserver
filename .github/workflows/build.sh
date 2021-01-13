@@ -11,9 +11,8 @@ export DRONE=true
 cd /src
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
-mkdir -p "${BUILDLOG}"
-mkdir -p "${BUILDCACHE}"
-make >"${BUILDLOG}/make.log" 2>&1 || ( tail -200 "${BUILDLOG}/make.log" ; exit 1 )
+mkdir buildlogs
+make >buildlogs/make.log 2>&1 || ( tail -200 buildlogs/make.log ; exit 1 )
 OUTPUT=$(git status --short)
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
@@ -32,16 +31,14 @@ if test -f "$${BUILDCACHE}/build_hash_`cat .build_hash`"; then
     exit 0
 fi
 
-if test -d docs; then make docs >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
-if test -d doc; then make doc >"${BUILDLOG}/make_doc.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_doc.log" ; exit 1 ); fi
+if test -d docs; then make docs >buildlogs/make_doc.log 2>&1 || ( tail -200 buildlogs/make_doc.log ; exit 1 ); fi
+if test -d doc; then make doc >buildlogs/make_doc.log 2>&1 || ( tail -200 buildlogs/make_doc.log ; exit 1 ); fi
 rm -Rf html_doc
 if test -d /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc; then cp -Rf /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc . ; fi
-make test >"${BUILDLOG}/make_test.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_test.log" ; exit 1 )
-make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >"${BUILDLOG}/make_rpm.log" 2>&1 || ( tail -200 "${BUILDLOG}/make_rpm.log" ; exit 1 )
+make test >buildlogs/make_test.log 2>&1 || ( tail -200 buildlogs/make_test.log ; exit 1 )
+make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >buildlogs/make_rpm.log 2>&1 || ( tail -200 buildlogs/make_rpm.log ; exit 1 )
 
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
-mkdir buildlogs
-mv ${BUILDLOG}/make*.log  buildlogs
 
 echo "::set-output name=bypass::false"

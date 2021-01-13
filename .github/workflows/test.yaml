@@ -12,7 +12,7 @@ env:
     MFMODULE: MFEXT
     MFMODULE_LOWERCASE: mfext
     MFBUILD: mfxxx
-    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ~/buildcache:/buildcache -v /private:/private -v /pub:/pub -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ~/buildcache:/buildcache -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e BUILDCACHE -e OS_VERSION"
     WORKFLOW_SCRIPTS_DIR: .github/workflows
     DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
     PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
@@ -30,12 +30,6 @@ jobs:
         id: SetVariables
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
-          pwd
-          echo ${{ github.workspace }}
-          ls -l ${{ github.workspace }}
-          cd ~
-          pwd
-          gabuzomeu
       - name: debug env
         run: |
           env
@@ -47,17 +41,17 @@ jobs:
       - name: buildcache
         uses: actions/cache@v2
         with:
-          path: /buildcache
+          path: ~/buildcache
           key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
       - name: build
         id: BuildStep
         run: |
+          mkdir -p ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
-          BUILDLOG_DIR=${{ steps.SetVariables.outputs.buildlog_dir }}
-          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e BUILDLOG=${BUILDLOG_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
           ls -l ${BUILDCACHE}
       - name : check ssh connect as ssh-scp-ssh-pipelines does not do it
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
