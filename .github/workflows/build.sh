@@ -38,7 +38,9 @@ if test -d /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/html_doc; then cp -R
 make test >buildlogs/make_test.log 2>&1 || ( tail -200 buildlogs/make_test.log ; exit 1 )
 make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >buildlogs/make_rpm.log 2>&1 || ( tail -200 buildlogs/make_rpm.log ; exit 1 )
 
-mkdir rpms
-mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
+mv buildlogs ..
+
+mkdir ../rpms
+mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm ../rpms
 
 echo "::set-output name=bypass::false"
