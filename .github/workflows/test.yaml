@@ -49,6 +49,7 @@ jobs:
         id: BuildStep
         run: |
           mkdir -p ${BUILDCACHE}
+          ls -l ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
