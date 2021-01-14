@@ -1,12 +1,10 @@
 #!/bin/bash
 
-#set -eu
-set -x
+set -eu
 
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
-echo ${BUILDCACHE}
 
 export DRONE_BRANCH=${BRANCH}
 export DRONE_TAG=""
@@ -36,8 +34,6 @@ cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
 echo "$${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
 cat .build_hash
 if test -f "${BUILDCACHE}/build_hash_`cat .build_hash`"; then
-    echo "next bypass"
-    touch .drone_downstream_bypass
     echo "::set-output name=bypass::true"
     exit 0
 fi
