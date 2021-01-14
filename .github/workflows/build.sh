@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+#set -eu
+set -x
 
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
@@ -32,7 +33,6 @@ MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>mod
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
 echo "$${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
-cat .build_hash
 if test -f "${BUILDCACHE}/build_hash_`cat .build_hash`"; then
     echo "::set-output name=bypass::true"
     exit 0
