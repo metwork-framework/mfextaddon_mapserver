@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/buildcache
-          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('*') }}
+          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
           restore-keys: |
             buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
       - name: build
