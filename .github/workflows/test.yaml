@@ -43,9 +43,8 @@ jobs:
         uses: davidsbond/cache@master
         with:
           path: ${{ github.workspace }}/buildcache
-          key: buildcache-metwork-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
-          restore-keys: |
-            buildcache-metwork-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
+          key: buildcache-metwork-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+          update: true
       - name: build
         id: BuildStep
         run: |
