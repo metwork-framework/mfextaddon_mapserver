@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "bypass = " ${{ steps.BuildStep.outputs.bypass }}
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == false }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUB_HOST }}
@@ -70,7 +70,7 @@ jobs:
           script: |
             pwd
       - name: publish buildlogs
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == false }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
@@ -85,13 +85,13 @@ jobs:
           scp: |
             '${LOCAL}/*' => ${REMOTE}
       - name: integration tests
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == false }}
         run: |
           TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e REF_BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == false && github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
@@ -108,7 +108,7 @@ jobs:
           last_ssh: |
             createrepo ${REMOTE} 
       - name: publish doc
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == false && github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
