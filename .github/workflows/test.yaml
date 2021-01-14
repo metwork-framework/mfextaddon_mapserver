@@ -40,7 +40,7 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: buildcache
-        uses: actions/cache@v2
+        uses: davidsbond/cache@master
         with:
           path: ${{ github.workspace }}/buildcache
           key: buildcache-metwork-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
@@ -57,7 +57,7 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
           ls -l ${BUILDCACHE}
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
-        if: ${{ steps.BuildStep.outputs.bypass == 'true' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUB_HOST }}
@@ -82,13 +82,13 @@ jobs:
           scp: |
             '${LOCAL}/*' => ${REMOTE}
       - name: integration tests
-        if: ${{ steps.BuildStep.outputs.bypass == false }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         run: |
           TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e REF_BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
-        if: ${{ steps.BuildStep.outputs.bypass == false && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
@@ -105,7 +105,7 @@ jobs:
           last_ssh: |
             createrepo ${REMOTE} 
       - name: publish doc
-        if: ${{ steps.BuildStep.outputs.bypass == false && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
