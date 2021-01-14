@@ -57,7 +57,7 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
           ls -l ${BUILDCACHE}
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
-        if: ${{ steps.BuildStep.outputs.bypass == false }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'true' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUB_HOST }}
@@ -67,7 +67,7 @@ jobs:
           script: |
             pwd
       - name: publish buildlogs
-        if: ${{ steps.BuildStep.outputs.bypass == false }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
