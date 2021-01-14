@@ -6,15 +6,13 @@ set -x
 yum install -y metwork-mfext-layer-python2-${REF_BRANCH##release_}
 
 if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
-
-ls -l /buildcache
+echo ${BUILDCACHE}
 
 export DRONE_BRANCH=${BRANCH}
 export DRONE_TAG=""
 export DRONE=true
 
 cd /src
-ls -l buildcache
 
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
 
@@ -23,12 +21,8 @@ export BUILDLOGS=buildlogs
 
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 
-mv buildlogs /tmp
-mv buildcache /tmp
-ls -l ..
-
-git status --short
-OUTPUT=$(git status --short)
+OUTPUT=$(git status --short | grep -v buildlogs | grep -v buildcache)
+echo ${OUTPUT}
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
     echo "git diff output"
@@ -36,17 +30,12 @@ if test "${OUTPUT}" != ""; then
     exit 1
 fi
 
-mv /tmp/buildlogs .
-mv /tmp/buildcache .
-ls -l buildcache
-ls -l /buildcache
-
 MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>module_hash.debug`
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
 echo "$${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
 cat .build_hash
-if test -f "/buildcache/build_hash_`cat .build_hash`"; then
+if test -f "${BUILDCACHE}/build_hash_`cat .build_hash`"; then
     echo "next bypass"
     touch .drone_downstream_bypass
     echo "::set-output name=bypass::true"
@@ -63,7 +52,7 @@ make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || (
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
-echo cached > /buildcache/build_hash_`cat .build_hash`
+echo cached > ${BUILDCACHE}/build_hash_`cat .build_hash`
 
 echo "::set-output name=bypass::false"
 
