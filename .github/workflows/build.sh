@@ -29,6 +29,10 @@ if test "${OUTPUT}" != ""; then
     exit 1
 fi
 
+ls -l /opt
+ls -l /opt/metwork-mfext-integration
+ls -l /opt/metwork-mfext-master
+
 MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>module_hash.debug`
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
