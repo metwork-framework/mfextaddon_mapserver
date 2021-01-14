@@ -43,7 +43,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/buildcache
-          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('*') }}
+          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('**') }}
+          restore-keys: |
+            buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
+      - name: check buildcache
+        run: |
+          ls -l ${BUILDCACHE}
+          ls -l ${{ github.workspace }}/buildcache
+      - name: buildcache2
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/buildcache
+          key: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ hashFiles('**') }}
           restore-keys: |
             buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
       - name: build
