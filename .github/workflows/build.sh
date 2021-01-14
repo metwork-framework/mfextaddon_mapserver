@@ -21,7 +21,7 @@ export BUILDLOGS=buildlogs
 make >${BUILDLOGS}/make.log 2>&1 || ( tail -200 ${BUILDLOGS}/make.log ; exit 1 )
 
 OUTPUT=$(git status --short | grep -v buildlogs | grep -v buildcache)
-echo ${OUTPUT}
+
 if test "${OUTPUT}" != ""; then
     echo "ERROR non empty git status output ${OUTPUT}"
     echo "git diff output"
@@ -29,14 +29,10 @@ if test "${OUTPUT}" != ""; then
     exit 1
 fi
 
-ls -l /opt
-ls -l /opt/metwork-mfext-integration
-ls -l /opt/metwork-mfext-master
-
 MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>module_hash.debug`
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
-echo "$${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
+echo "${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
 if test -f "${BUILDCACHE}/build_hash_`cat .build_hash`"; then
     echo "::set-output name=bypass::true"
     exit 0
