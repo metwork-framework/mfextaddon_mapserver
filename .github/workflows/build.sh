@@ -48,7 +48,7 @@ make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || (
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
-echo cached > ${BUILDCACHE}/build_hash_`cat .build_hash`
+touch ${BUILDCACHE}/build_hash_`cat .build_hash`
 
 echo "::set-output name=bypass::false"
 
