@@ -40,11 +40,12 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: buildcache
-        uses: davidsbond/cache@master
+        uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/buildcache
-          key: metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
-          update: true
+          key: metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
+          restore-keys: |
+            metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
       - name: build
         id: BuildStep
         run: |
