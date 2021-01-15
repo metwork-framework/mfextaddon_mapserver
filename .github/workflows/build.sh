@@ -11,6 +11,7 @@ export DRONE_BRANCH=${BRANCH}
 export DRONE_TAG=""
 export DRONE=true
 
+ls -l ${BUILDCACHE}
 cd /src
 
 mkdir -p "/opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}"
@@ -49,6 +50,7 @@ mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
 touch ${BUILDCACHE}/build_hash_`cat .build_hash`
+ls -l ${BUILDCACHE}
 
 echo "::set-output name=bypass::false"
 

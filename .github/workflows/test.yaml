@@ -55,7 +55,6 @@ jobs:
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
-          ls -l ${BUILDCACHE}
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         uses: appleboy/ssh-action@master
