@@ -51,10 +51,11 @@ jobs:
         run: |
           mkdir -p ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
+          export REPO=${{ steps.SetVariables.outputs.repository }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
-          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         uses: appleboy/ssh-action@master

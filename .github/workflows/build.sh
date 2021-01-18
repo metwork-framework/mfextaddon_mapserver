@@ -34,7 +34,7 @@ MODULEHASH=`/opt/metwork-mfext-${TARGET_DIR}/bin/mfext_wrapper module_hash 2>mod
 if test -f /opt/metwork-mfext-${TARGET_DIR}/.dhash; then cat /opt/metwork-mfext-${TARGET_DIR}/.dhash; fi
 cat module_hash.debug |sort |uniq ; rm -f module_hash.debug
 echo "${MODULEHASH}${DRONE_TAG}${DRONE_BRANCH}" |md5sum |cut -d ' ' -f1 >.build_hash
-if test -f "${BUILDCACHE}/build_hash_mfext_${BRANCH}_`cat .build_hash`"; then
+if test -f "${BUILDCACHE}/build_hash_${REPO}_${BRANCH}_`cat .build_hash`"; then
     echo "::set-output name=bypass::true"
     exit 0
 fi
@@ -49,8 +49,8 @@ make RELEASE_BUILD=${GITHUB_RUN_NUMBER} rpm >${BUILDLOGS}/make_rpm.log 2>&1 || (
 mkdir rpms
 mv /opt/metwork-${MFMODULE_LOWERCASE}-${TARGET_DIR}/*.rpm rpms
 
-rm ${BUILDCACHE}/build_hash_mfext_${BRANCH}_*
-touch ${BUILDCACHE}/build_hash_mfext_${BRANCH}_`cat .build_hash`
+rm -f ${BUILDCACHE}/build_hash_${REPO}_${BRANCH}_*
+touch ${BUILDCACHE}/build_hash_${REPO}_${BRANCH}_`cat .build_hash`
 ls -l ${BUILDCACHE}
 
 echo "::set-output name=bypass::false"
