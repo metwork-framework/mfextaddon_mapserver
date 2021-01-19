@@ -43,9 +43,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+        continue-on-error: true
       - name: buildcache
         uses: actions/cache@v2
-        if: always()
         with:
           path: ${{ github.workspace }}/buildcache
           key: metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
