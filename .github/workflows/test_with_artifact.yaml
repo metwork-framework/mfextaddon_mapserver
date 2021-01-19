@@ -39,28 +39,41 @@ jobs:
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
-      - name: download buildcache
+      - name: download artifact buildcache
+        id: BuildcacheDownload
         uses: actions/download-artifact@v2
         with:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
         continue-on-error: true
-      - name: buildcache
-        uses: actions/cache@v2
-        with:
-          path: ${{ github.workspace }}/buildcache
-          key: metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
-          restore-keys: |
-            metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
+      - name: uncompress artifact
+        if: ${{ steps.BuildcacheDownload.outcome == 'success' }}
+        run: |
+          mv buildcache.tar.gz ${BUILDCACHE}
+          cd ${BUILDCACHE}
+          tar xvfz buildcache.tar.gz
+          rm -f buildcache.tar.gz
+          ls -l
+          cd -
       - name: build
         id: BuildStep
         run: |
-          mkdir -p ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           export REPO=${{ steps.SetVariables.outputs.repository }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+      - name: compress artifact
+        run: |
+          cd ${BUILDCACHE}
+          tar cvfz buildcache.tar.gz .
+          ls -l
+          cd -
+      - name: upload artifact buildcache
+        uses: actions/upload-artifact@v2
+        with:
+          name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+          path: ${BUILDCACHE}/buildcache.tar.gz
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         uses: appleboy/ssh-action@master
