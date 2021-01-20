@@ -44,7 +44,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
-          workflow: test_with_artifact
+          workflow: test_with_artifact.yml
         continue-on-error: true
       - name: uncompress artifact
         if: ${{ steps.BuildcacheDownload.outcome == 'success' }}
