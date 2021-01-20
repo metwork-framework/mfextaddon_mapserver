@@ -52,6 +52,7 @@ jobs:
         run: |
           tar xvfz buildcache.tar.gz
           rm -f buildcache.tar.gz
+          ls -l buildcache
       - name: build
         id: BuildStep
         run: |
@@ -64,6 +65,7 @@ jobs:
       - name: compress artifact
         if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         run: |
+          ls -l buildcache
           tar cvfz buildcache.tar.gz ./buildcache
       - name: upload artifact buildcache
         uses: actions/upload-artifact@v2
