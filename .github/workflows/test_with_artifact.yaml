@@ -63,7 +63,9 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: compress artifact
         run: |
+          pwd
           tar cvfz buildcache.tar.gz ${BUILDCACHE}
+          ls -l
       - name: upload artifact buildcache
         uses: actions/upload-artifact@v2
         with:
