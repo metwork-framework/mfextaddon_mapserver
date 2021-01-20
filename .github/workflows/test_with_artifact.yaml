@@ -56,6 +56,7 @@ jobs:
           pwd
           rm -f buildcache.tar.gz
           ls -l ${BUILDCACHE}
+          ls -l buildcache
       - name: build
         id: BuildStep
         run: |
@@ -66,12 +67,15 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: compress artifact
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         run: |
           pwd
-          tar cvfz buildcache.tar.gz ${BUILDCACHE}
-          ls -l
+          ls -l buildcache
+          tar cvfz buildcache.tar.gz ./buildcache
+          tar tvfz buildcache.tar.gz
       - name: upload artifact buildcache
         uses: actions/upload-artifact@v2
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
         with:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
           path: buildcache.tar.gz
