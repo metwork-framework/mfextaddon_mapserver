@@ -55,7 +55,6 @@ jobs:
           tar xvfz buildcache.tar.gz
           rm -f buildcache.tar.gz
           ls -l buildcache
-          ls -l ${BUILDCACHE}
       - name: build
         id: BuildStep
         run: |
