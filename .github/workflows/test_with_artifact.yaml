@@ -41,9 +41,10 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: download artifact buildcache
         id: BuildcacheDownload
-        uses: actions/download-artifact@v2
+        uses: dawidd6/action-download-artifact@v2
         with:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
+          workflow: test_with_artifact
         continue-on-error: true
       - name: uncompress artifact
         if: ${{ steps.BuildcacheDownload.outcome == 'success' }}
