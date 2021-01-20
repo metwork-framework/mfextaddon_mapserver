@@ -43,6 +43,7 @@ jobs:
         id: BuildcacheDownload
         uses: dawidd6/action-download-artifact@v2
         with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
           workflow: test_with_artifact.yml
           branch: ${{ steps.SetVariables.outputs.branch }}
