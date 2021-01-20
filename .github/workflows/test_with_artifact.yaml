@@ -45,7 +45,7 @@ jobs:
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
-          workflow: test_with_artifact.yml
+          workflow: test_with_artifact.yaml
           branch: ${{ steps.SetVariables.outputs.branch }}
         continue-on-error: true
       - name: uncompress artifact
