@@ -18,7 +18,7 @@ env:
     PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
 
 jobs:
-  test:
+  test_with_artifact:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
