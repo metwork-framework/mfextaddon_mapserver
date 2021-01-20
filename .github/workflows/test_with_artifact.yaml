@@ -47,7 +47,6 @@ jobs:
           name: buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}
           workflow: test_with_artifact.yaml
           workflow_conclusion: success
-          branch: ${{ steps.SetVariables.outputs.branch }}
         continue-on-error: true
       - name: uncompress artifact
         if: ${{ steps.BuildcacheDownload.outcome == 'success' }}
