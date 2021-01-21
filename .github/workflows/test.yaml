@@ -1,0 +1,122 @@
+name: test_with_cache_action
+
+on:
+  push:
+  pull_request:
+  repository_dispatch:
+    types: metwork-trigger
+
+env:
+    BUILDCACHE: ${{ github.workspace }}/buildcache
+    OS_VERSION: centos6
+    MFMODULE: MFEXT
+    MFMODULE_LOWERCASE: mfext
+    MFBUILD: mfxxx
+    DOCKER_RUN_OPTIONS: "-v ${{ github.workspace }}:/src -v ${{ github.workspace }}/buildcache:/buildcache -e GITHUB_REF -e MFMODULE_LOWERCASE -e GITHUB_RUN_NUMBER -e GITHUB_SHA -e GITHUB_REPOSITORY -e TARGET_DIR -e OS_VERSION"
+    WORKFLOW_SCRIPTS_DIR: .github/workflows
+    DOCKER_WORKFLOW_SCRIPTS_DIR: /src/.github/workflows
+    PAYLOAD_BRANCH: ${{ github.event.client_payload.branch}}
+
+jobs:
+  test_with_cache_action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.client_payload.branch || github.ref }}
+      - name: set variables
+        id: SetVariables
+        run: |
+          ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
+          mkdir -p ${BUILDCACHE}
+      - name: debug env
+        run: |
+          env
+      - name: bootstrap
+        run: |
+          export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
+          BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
+          docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
+      - name: buildcache
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/buildcache
+          key: metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-${{ github.run_number }}
+          restore-keys: |
+            metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
+      - name: build
+        id: BuildStep
+        run: |
+          mkdir -p ${BUILDCACHE}
+          export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
+          export REPO=${{ steps.SetVariables.outputs.repository }}
+          BRANCH=${{ steps.SetVariables.outputs.branch }}
+          REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
+          BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+      - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          username: ${{ secrets.PUB_USERNAME }}
+          password: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          script: |
+            pwd
+      - name: publish buildlogs
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        env:
+          REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
+          LOCAL: ${{ github.workspace }}/buildlogs
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          user: ${{ secrets.PUB_USERNAME }}
+          pass: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          first_ssh: |
+            mkdir -p ${REMOTE}
+          scp: |
+            '${LOCAL}/*' => ${REMOTE}
+      - name: integration tests
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        run: |
+          TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
+          REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
+          docker run ${DOCKER_RUN_OPTIONS} -e REF_BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
+      - name: publish rpms
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        env:
+          REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
+          LOCAL: ${{ github.workspace }}/rpms
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          user: ${{ secrets.PUB_USERNAME }}
+          pass: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          first_ssh: |
+            mkdir -p ${REMOTE}
+          scp: |
+            '${LOCAL}/metwork-*.rpm' => ${REMOTE}
+          last_ssh: |
+            createrepo ${REMOTE} 
+      - name: publish doc
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        env:
+          REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
+          LOCAL: ${{ github.workspace }}/html_doc
+        with:
+          host: ${{ secrets.PUB_HOST }}
+          user: ${{ secrets.PUB_USERNAME }}
+          pass: ${{ secrets.PUB_PASSWORD }}
+          port: 22
+          first_ssh: |
+            rm -rf ${REMOTE}
+            mkdir -p ${REMOTE}
+          scp: |
+            '${LOCAL}/*' => ${REMOTE}
