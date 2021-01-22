@@ -8,4 +8,4 @@
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | python2_mapserverapi |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | custom | python3_mapserverapi |
 
-*(6 components)*
+*(7 components)*
