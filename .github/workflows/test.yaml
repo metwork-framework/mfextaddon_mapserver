@@ -29,8 +29,9 @@ jobs:
       - name: set variables
         id: SetVariables
         run: |
-          cat ${{ github.env }}
-          cat ${{ github.event_path }}
+          echo "ref" ${{ github.ref }}
+          echo "base_ref" ${{ github.base_ref }}
+          echo "head_ref" ${{ github.head_ref }}
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           mkdir -p ${BUILDCACHE}
       - name: debug env

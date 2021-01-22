@@ -23,7 +23,7 @@ case "${GITHUB_EVENT_NAME}" in
     push)
         case "${GITHUB_REF}" in
             refs/tags/*)
-                B=bidon_tag;;
+                B=${GITHUB_BASE_REF#refs/heads/};;
             *)
                 B=${GITHUB_REF#refs/heads/};;
         esac;;
