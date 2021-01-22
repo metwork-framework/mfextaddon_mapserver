@@ -31,6 +31,10 @@ jobs:
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           mkdir -p ${BUILDCACHE}
+          echo "github.ref" ${{ github.ref }}
+          echo "github.event_name" ${{ github.event_name }}
+          echo "github.head_ref" ${{ github.head_ref }}
+          echo "github.base_ref" ${{ github.base_ref }}
       - name: debug env
         run: |
           env
@@ -67,7 +71,7 @@ jobs:
           script: |
             pwd
       - name: publish buildlogs
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
