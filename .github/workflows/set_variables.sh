@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # FIXME: tags ?
-# FIXME: PRs ?
 
 #set -eu
 set -x
@@ -21,8 +20,13 @@ case "${GITHUB_EVENT_NAME}" in
         B=${PAYLOAD_BRANCH};;
     pull_request)
         B=${GITHUB_BASE_REF};;
-    *)
-        B=${GITHUB_REF#refs/heads/};;
+    push)
+        case "${GITHUB_REF}" in
+            refs/tags/*)
+                B=bidon_tag;;
+            *)
+                B=${GITHUB_REF#refs/heads/};;
+        esac;;
 esac
 case "${GITHUB_REF}" in
     refs/heads/experimental* | refs/heads/master | refs/heads/release_*)

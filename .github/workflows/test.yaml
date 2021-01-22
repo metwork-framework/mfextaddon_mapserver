@@ -29,16 +29,14 @@ jobs:
       - name: set variables
         id: SetVariables
         run: |
+          echo "GITHUB_REF" ${{ github.ref }}
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           mkdir -p ${BUILDCACHE}
-          echo "github.ref" ${{ github.ref }}
-          echo "github.event_name" ${{ github.event_name }}
-          echo "github.head_ref" ${{ github.head_ref }}
-          echo "github.base_ref" ${{ github.base_ref }}
       - name: debug env
         run: |
           env
       - name: bootstrap
+        if: ${{ steps.SetVariables.outputs.branch != 'bidon_tag' }}
         run: |
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
@@ -61,7 +59,7 @@ jobs:
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUB_HOST }}
@@ -71,7 +69,7 @@ jobs:
           script: |
             pwd
       - name: publish buildlogs
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
@@ -92,7 +90,7 @@ jobs:
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e REF_BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
@@ -109,7 +107,7 @@ jobs:
           last_ssh: |
             createrepo ${REMOTE} 
       - name: publish doc
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
