@@ -32,6 +32,8 @@ jobs:
           echo "ref" ${{ github.ref }}
           echo "base_ref" ${{ github.base_ref }}
           echo "head_ref" ${{ github.head_ref }}
+          echo "cat event_path"
+          cat ${{ github.event_path }}
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           mkdir -p ${BUILDCACHE}
       - name: debug env
