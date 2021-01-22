@@ -3,7 +3,8 @@
 # FIXME: tags ?
 # FIXME: PRs ?
 
-set -eu
+#set -eu
+set -x
 
 if test "${OS_VERSION:-}" = ""; then
     echo "ERROR: OS_VERSION env is empty"
@@ -15,11 +16,14 @@ if test "${MFBUILD:-}" = ""; then
 fi
 
 R=${GITHUB_REPOSITORY#metwork-framework/}
-if [ "${PAYLOAD_BRANCH}" == "" ];then
-  B=${GITHUB_REF#refs/heads/}
-else
-  B=${PAYLOAD_BRANCH}
-fi
+case "${GITHUB_EVENT_NAME}" in
+    repository_dispatch)
+        B=${PAYLOAD_BRANCH};;
+    pull_request)
+        B=${GITHUB_BASE_REF};;
+    *)
+        B=${GITHUB_REF#refs/heads/};;
+esac
 case "${GITHUB_REF}" in
     refs/heads/experimental* | refs/heads/master | refs/heads/release_*)
         REF_BRANCH=${B}
