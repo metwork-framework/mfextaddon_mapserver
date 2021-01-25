@@ -51,6 +51,9 @@ case "${GITHUB_REF}" in
         TAG=${GITHUB_REF#refs/tags/}
         REF_BRANCH=${B}
         TARGET_DIR=${B##release_};;
+    refs/pull/*)
+        REF_BRANCH=${B}
+        TARGET_DIR=${B##release_};;
 esac
 
 echo "::set-output name=branch::${B}"
