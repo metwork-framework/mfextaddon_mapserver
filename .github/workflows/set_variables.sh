@@ -20,7 +20,7 @@ case "${GITHUB_EVENT_NAME}" in
         B=${PAYLOAD_BRANCH};;
     pull_request)
         case "${GITHUB_BASE_REF}" in
-            master | experimental* | release_* | github*)
+            master | integration | experimental* | release_* | ci* | pci* | github*)
                 B=${GITHUB_BASE_REF};;
             *)
                 B=null;
@@ -28,7 +28,6 @@ case "${GITHUB_EVENT_NAME}" in
     push)
         case "${GITHUB_REF}" in
             refs/tags/v*)
-                git branch -a
                 B=`git branch -a --contains "${GITHUB_REF}" | grep remotes | grep release_ | cut -d"/" -f3`;;
             refs/heads/*)
                 B=${GITHUB_REF#refs/heads/};;
@@ -40,6 +39,8 @@ if [ -z ${B} ]; then
   B=null
 fi
 TAG=
+REF_BRANCH=
+TARGET_DIR=
 case "${GITHUB_REF}" in
     refs/heads/experimental* | refs/heads/master | refs/heads/release_*)
         REF_BRANCH=${B}
@@ -53,7 +54,11 @@ case "${GITHUB_REF}" in
         TARGET_DIR=${B##release_};;
     refs/pull/*)
         REF_BRANCH=${B}
-        TARGET_DIR=${B##release_};;
+        if [ "${REF_BRANCH}" == "integration" ]; then
+            TARGET_DIR=master
+        else
+            TARGET_DIR=${B##release_}
+        fi;;
 esac
 
 echo "::set-output name=branch::${B}"
