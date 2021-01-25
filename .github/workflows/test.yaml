@@ -55,6 +55,7 @@ jobs:
       - name: bootstrap
         if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         run: |
+          echo "Test"
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
