@@ -2,7 +2,25 @@ name: test_with_cache_action
 
 on:
   push:
+    branches: 
+      - master
+      - integration
+      - experimental*
+      - release_*
+      - ci*
+      - pci* 
+      - github*
+    tags:
+      - v*
   pull_request:
+    base_ref:
+      - master
+      - integration
+      - experimental*
+      - release_*
+      - ci*
+      - pci* 
+      - github*
   repository_dispatch:
     types: metwork-trigger
 
@@ -31,19 +49,18 @@ jobs:
         run: |
           ${WORKFLOW_SCRIPTS_DIR}/set_variables.sh
           mkdir -p ${BUILDCACHE}
-          echo "github.ref" ${{ github.ref }}
-          echo "github.event_name" ${{ github.event_name }}
-          echo "github.head_ref" ${{ github.head_ref }}
-          echo "github.base_ref" ${{ github.base_ref }}
       - name: debug env
         run: |
           env
       - name: bootstrap
+        if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         run: |
+          echo "Test"
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
           docker run ${DOCKER_RUN_OPTIONS} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap.sh"
       - name: buildcache
+        if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/buildcache
@@ -51,17 +68,19 @@ jobs:
           restore-keys: |
             metwork-buildcache-${{ steps.SetVariables.outputs.repository }}-${{ steps.SetVariables.outputs.branch }}-
       - name: build
+        if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         id: BuildStep
         run: |
           mkdir -p ${BUILDCACHE}
           export TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
           export REPO=${{ steps.SetVariables.outputs.repository }}
           BRANCH=${{ steps.SetVariables.outputs.branch }}
+          TAG=${{ steps.SetVariables.outputs.tag }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
-          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+          docker run ${DOCKER_RUN_OPTIONS} -e BRANCH=${BRANCH} -e REF_BRANCH=${REF_BRANCH} -e TAG=${TAG} -e REPO=${REPO} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
       - name: check ssh connect as ssh-scp-ssh-pipelines does not do it
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' && steps.SetVariables.outputs.branch != 'null' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PUB_HOST }}
@@ -71,7 +90,7 @@ jobs:
           script: |
             pwd
       - name: publish buildlogs
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' && steps.SetVariables.outputs.branch != 'null' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
@@ -86,13 +105,13 @@ jobs:
           scp: |
             '${LOCAL}/*' => ${REMOTE}
       - name: integration tests
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && steps.SetVariables.outputs.branch != 'null' }}
         run: |
           TESTIMAGE=${{ steps.SetVariables.outputs.testimage }}
           REF_BRANCH=${{ steps.SetVariables.outputs.ref_branch }}
           docker run ${DOCKER_RUN_OPTIONS} -e REF_BRANCH=${REF_BRANCH} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' && steps.SetVariables.outputs.branch != 'null' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
@@ -109,7 +128,7 @@ jobs:
           last_ssh: |
             createrepo ${REMOTE} 
       - name: publish doc
-        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name == 'push' }}
+        if: ${{ steps.BuildStep.outputs.bypass == 'false' && github.event_name != 'pull_request' && steps.SetVariables.outputs.branch != 'null' }}
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
           REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}
