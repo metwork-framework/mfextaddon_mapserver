@@ -14,6 +14,7 @@ if test "${MFBUILD:-}" = ""; then
     exit 1
 fi
 
+B=null
 R=${GITHUB_REPOSITORY#metwork-framework/}
 case "${GITHUB_EVENT_NAME}" in
     repository_dispatch)
@@ -22,9 +23,10 @@ case "${GITHUB_EVENT_NAME}" in
         B=${GITHUB_BASE_REF};;
     push)
         case "${GITHUB_REF}" in
-            refs/tags/*)
-                B=${GITHUB_BASE_REF#refs/heads/};;
-            *)
+            refs/tags/v*)
+                git branch -a
+                B=`git branch -a --contains "${GITHUB_REF}" | grep remotes | grep release_ | cut -d"/" -f3`;;
+            refs/heads/*)
                 B=${GITHUB_REF#refs/heads/};;
         esac;;
 esac
