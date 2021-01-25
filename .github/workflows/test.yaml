@@ -13,14 +13,6 @@ on:
     tags:
       - v*
   pull_request:
-    base_ref:
-      - master
-      - integration
-      - experimental*
-      - release_*
-      - ci*
-      - pci* 
-      - github*
   repository_dispatch:
     types: metwork-trigger
 

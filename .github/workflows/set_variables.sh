@@ -63,6 +63,12 @@ case "${GITHUB_REF}" in
         esac;;
 esac
 
+if [ -z ${TAG} ]; then
+  CI=continuous_integration
+else
+  CI=releases
+fi
+
 echo "::set-output name=branch::${B}"
 echo "::set-output name=tag::${TAG}"
 echo "::set-output name=ref_branch::${REF_BRANCH}"
@@ -70,6 +76,6 @@ echo "::set-output name=repository::${R}"
 echo "::set-output name=target_dir::${TARGET_DIR}"
 echo "::set-output name=buildimage::metwork/${MFBUILD}-${OS_VERSION}-buildimage:${REF_BRANCH}"
 echo "::set-output name=testimage::metwork/${MFBUILD}-${OS_VERSION}-testimage:${REF_BRANCH}"
-echo "::set-output name=buildlog_dir::/pub/metwork/continuous_integration/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}"
-echo "::set-output name=rpm_dir::/pub/metwork/continuous_integration/rpms/${B}/${OS_VERSION}"
-echo "::set-output name=doc_dir::/pub/metwork/continuous_integration/docs/${B}/${R}"
+echo "::set-output name=buildlog_dir::/pub/metwork/${CI}/buildlogs/${B}/${R}/${OS_VERSION}/${GITHUB_RUN_NUMBER}"
+echo "::set-output name=rpm_dir::/pub/metwork/${CI}/rpms/${B}/${OS_VERSION}"
+echo "::set-output name=doc_dir::/pub/metwork/${CI}/docs/${B}/${R}"
