@@ -53,12 +53,14 @@ case "${GITHUB_REF}" in
         REF_BRANCH=${B}
         TARGET_DIR=${B##release_};;
     refs/pull/*)
-        REF_BRANCH=${B}
-        if [ "${REF_BRANCH}" == "integration" ]; then
-            TARGET_DIR=master
-        else
-            TARGET_DIR=${B##release_}
-        fi;;
+        case "${B}" in
+            integration | ci* | pci* | github*)
+                REF_BRANCH=integration
+                TARGET_DIR=master;;
+            *)
+                REF_BRANCH=${B}
+                TARGET_DIR=${B##release_};;
+        esac;;
 esac
 
 echo "::set-output name=branch::${B}"
