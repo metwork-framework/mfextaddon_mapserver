@@ -43,9 +43,11 @@ jobs:
         if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         run: |
           TARGET_DIR=${{ steps.SetVariables.outputs.target_dir }}
+          BRANCH=${{ steps.SetVariables.outputs.branch }}
+          TAG=${{ steps.SetVariables.outputs.tag }}
           DEP_DIR=${{ steps.SetVariables.outputs.dep_dir }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
-          docker run ${DOCKER_RUN_OPTIONS} -e TARGET_DIR=${TARGET_DIR} -e DEP_DIR=${DEP_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap_ci.sh"
+          docker run ${DOCKER_RUN_OPTIONS} -e TARGET_DIR=${TARGET_DIR} -e BRANCH=${BRANCH} -e TAG=${TAG} -e DEP_DIR=${DEP_DIR} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/bootstrap_ci.sh"
       - name: build
         if: ${{ steps.SetVariables.outputs.branch != 'null' }}
         id: BuildStep

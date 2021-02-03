@@ -47,6 +47,7 @@ case "${GITHUB_REF}" in
     refs/tags/v*)
         TAG=${GITHUB_REF#refs/tags/}
         DEP_BRANCH=${B}
+        DEP_DIR=${B##release_}
         TARGET_DIR=${B##release_};;
     refs/pull/*)
         case "${B}" in
