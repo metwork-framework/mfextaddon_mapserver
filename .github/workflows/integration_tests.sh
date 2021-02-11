@@ -1,10 +1,8 @@
 #!/bin/bash
 
-#set -eu
-set -x
+set -eu
 
 cd /src
-ls -l rpms
 
 
 echo -e "[metwork_${DEP_BRANCH}]" >/etc/yum.repos.d/metwork.repo

@@ -1,8 +1,6 @@
 #!/bin/bash
 
-#set -eu
-set -x
-
+set -eu
 
 #if test -d /buildcache; then export BUILDCACHE=/buildcache; fi
 

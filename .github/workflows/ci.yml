@@ -9,7 +9,6 @@ on:
       - release_*
       - ci*
       - pci* 
-      - github*
     tags:
       - v*
   pull_request:

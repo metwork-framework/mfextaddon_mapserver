@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -eu
 
 if test "${OS_VERSION:-}" = ""; then
     echo "ERROR: OS_VERSION env is empty"
