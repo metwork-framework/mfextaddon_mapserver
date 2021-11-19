@@ -6,6 +6,8 @@
 
 ## v0.9.0 (2019-10-22)
 
-- No interesting change
+### Bug Fixes
+
+- fix missing dependency (thanks to Kate CAYLA)
 
 
