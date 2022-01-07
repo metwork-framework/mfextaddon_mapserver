@@ -16,7 +16,6 @@ export DRONE=true
     if test "${OS_VERSION}" = "centos8"; then export METWORK_BUILD_OS=generic; else export METWORK_BUILD_OS=${OS_VERSION}; fi
 
 
-
     yum install -y metwork-mfext-layer-python2-${BRANCH##release_}
 
 
