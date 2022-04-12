@@ -1,1 +1,1 @@
-no_extra_lib
+libcroco-0.6.so.3
