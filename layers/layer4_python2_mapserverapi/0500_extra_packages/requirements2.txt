@@ -1,1 +1,0 @@
--e git+https://github.com/metwork-framework/mapserverapi_python.git@c90f709ac201d4aedce370d62091b99275dfd741#egg=mapserverapi
