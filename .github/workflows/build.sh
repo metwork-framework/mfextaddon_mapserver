@@ -18,7 +18,7 @@ export DRONE=true
     yum install -y metwork-mfext-layer-python2-${BRANCH##release_}
 
 
-
+git config --global --add safe.directory /src
 cd /src
 
 
