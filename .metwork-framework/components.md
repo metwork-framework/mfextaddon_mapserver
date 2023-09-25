@@ -1,6 +1,6 @@
 | Name | Version | Layer |
 | --- | --- | --- |
-| [mapserver](http://mapserver.org) | 7.6.4 | mapserver |
+| [mapserver](http://mapserver.org) | 7.6.5 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi) | 0.1.6 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | c90f709 | python3_mapserverapi |
 
