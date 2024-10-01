@@ -2,10 +2,10 @@ include ../../../adm/root.mk
 include $(MFEXT_HOME)/share/package.mk
 
 export NAME=mapserver
-export VERSION=8.0.1
+export VERSION=8.2.2
 export EXTENSION=tar.gz
 export CHECKTYPE=MD5
-export CHECKSUM=c85b9b734471da431958b6331aae0803
+export CHECKSUM=9bc8e375493f59ac1ef282b127096ec4
 DESCRIPTION=\
 MapServer is an Open Source platform for publishing spatial data and interactive mapping applications to the web.
 WEBSITE=http://mapserver.org
