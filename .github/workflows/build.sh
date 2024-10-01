@@ -15,9 +15,7 @@ export DRONE=true
     if test "${OS_VERSION}" = "centos8"; then export METWORK_BUILD_OS=generic; else export METWORK_BUILD_OS=${OS_VERSION}; fi
 
 
-#yum install -y metwork-mfext-layer-python3_scientific-${BRANCH##release_}
-yum install -y metwork-mfext-layer-python3_scientific-integration
-
+yum install -y metwork-mfext-layer-python3_scientific-${BRANCH##release_}
 
 git config --global --add safe.directory /src
 cd /src
