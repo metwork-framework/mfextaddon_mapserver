@@ -11,8 +11,12 @@ MapServer is an Open Source platform for publishing spatial data and interactive
 WEBSITE=http://mapserver.org
 LICENSE=MIT
 
-all:: $(PREFIX)/bin/mapserv
+all:: $(PREFIX)/bin/mapserv $(PREFIX)/etc/mapserver.conf
 $(PREFIX)/bin/mapserv:
 	$(MAKE) --file=$(MFEXT_HOME)/share/Makefile.standard OPTIONS="-DWITH_CURL=1 -DWITH_GIF=0 -DWITH_FCGI=0 -DWITH_PROTOBUFC=1 -DWITH_RSVG=1 -DCMAKE_PREFIX_PATH='$(PREFIX);$(PREFIX)/../scientific_core;$(PREFIX)/../core'" download uncompress configure_cmake cmake build_cmake install_cmake
-	mkdir -p $(PREFIX)/etc
-	mv $(PREFIX)/etc/mapserver-sample.conf $(PREFIX)/etc/mapserver.conf || mv /etc/$(PREFIX)/mapserver-sample.conf $(PREFIX)/etc/mapserver.conf
+	mkdir -p $(PREFIX)/etc $(PREFIX)/tests $(PREFIX)/share/ogcapi
+	cp build/$(NAME)-$(VERSION)/tests/test.map $(PREFIX)/tests
+	cp -R build/$(NAME)-$(VERSION)/share/ogcapi/templates $(PREFIX)/share/ogcapi
+
+$(PREFIX)/etc/mapserver.conf:
+	cat mapserver.conf | sed "s:PREFIX:$(PREFIX):" > $(PREFIX)/etc/mapserver.conf
