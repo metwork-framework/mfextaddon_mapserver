@@ -5,6 +5,6 @@
 | [mappyfile](http://github.com/geographika/mappyfile) | 1.0.0 | python3_mapserverapi |
 | [mapserver](http://mapserver.org) | 8.2.2 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi) | 0.1.6 | mapserver |
-| [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | c90f709 | python3_mapserverapi |
+| [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | 8ee2658 | python3_mapserverapi |
 
 *(6 components)*
