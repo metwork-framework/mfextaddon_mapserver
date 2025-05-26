@@ -1,4 +1,4 @@
--e git+https://github.com/metwork-framework/mapserverapi_python.git@c90f709ac201d4aedce370d62091b99275dfd741#egg=mapserverapi
+-e git+https://github.com/metwork-framework/mapserverapi_python.git@8ee265897d84367ca2776acfbc3f6be09f716c84#egg=mapserverapi
 jsonref==1.1.0
 lark==1.1.8
 mappyfile==1.0.0
