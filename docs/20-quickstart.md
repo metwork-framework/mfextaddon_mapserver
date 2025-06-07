@@ -23,13 +23,7 @@ $ . /opt/metwork-mfext/share/interactive_profile
 $ # We check that the layer is installed and loaded
 $ layers |grep mapserver
 - (*) mapserver@mfext [/opt/metwork-mfext/opt/mapserver]
-- python2_mapserverapi@mfext [/opt/metwork-mfext/opt/python2_mapserverapi]
 - (*) python3_mapserverapi@mfext [/opt/metwork-mfext/opt/python3_mapserverapi]
-
-$ # note: we should have the `(*)` sign before each **loaded** layers
-$ #       in that example, this is normal not to have the `(*)` sign before
-$ #       python2_mapserverapi@mfext layer because both pythonX layers are mutually
-$ #       exclusive
 
 $ python
 >>> import mapserverapi
