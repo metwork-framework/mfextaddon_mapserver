@@ -1,5 +1,11 @@
 # release_2.0 CHANGELOG
 
+## [Unreleased]
+
+### New Features
+
+- remove layer python2_mapserverapi
+
 ## v2.0.2 (2023-12-13)
 
 - No interesting change
