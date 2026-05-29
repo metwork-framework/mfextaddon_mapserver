@@ -1,0 +1,161 @@
+diff -up mapserver-8.2.2/src/idw.c.orig mapserver-8.2.2/src/idw.c
+--- mapserver-8.2.2/src/idw.c.orig	2026-05-29 09:36:13.383810476 +0000
++++ mapserver-8.2.2/src/idw.c	2026-05-29 09:51:38.363457701 +0000
+@@ -69,7 +69,7 @@ void msIdwProcessing(layerObj *layer,
+   if (interpParamsProcessing) {
+     interpParams->radius = atof(interpParamsProcessing);
+   } else {
+-    interpParams->radius = MAX(layer->map->width, layer->map->height);
++    interpParams->radius = MS_MAX(layer->map->width, layer->map->height);
+   }
+ 
+   interpParamsProcessing =
+diff -up mapserver-8.2.2/src/mapcontour.c.orig mapserver-8.2.2/src/mapcontour.c
+--- mapserver-8.2.2/src/mapcontour.c.orig	2026-05-29 09:39:04.895117898 +0000
++++ mapserver-8.2.2/src/mapcontour.c	2026-05-29 10:00:38.348380894 +0000
+@@ -310,19 +310,19 @@ static int msContourLayerReadRaster(laye
+      * there is no point in interpolating the data for contours in this case.
+      */
+ 
+-    virtual_grid_step_x = (int)floor(map_cellsize_x / ABS(adfGeoTransform[1]));
++    virtual_grid_step_x = (int)floor(map_cellsize_x / MS_ABS(adfGeoTransform[1]));
+     if (virtual_grid_step_x < 1)
+       virtual_grid_step_x =
+           1; /* Do not interpolate data if grid sampling step < 1 */
+ 
+-    virtual_grid_step_y = (int)floor(map_cellsize_y / ABS(adfGeoTransform[5]));
++    virtual_grid_step_y = (int)floor(map_cellsize_y / MS_ABS(adfGeoTransform[5]));
+     if (virtual_grid_step_y < 1)
+       virtual_grid_step_y =
+           1; /* Do not interpolate data if grid sampling step < 1 */
+ 
+     /* target cellsize is a multiple of raw data cellsize based on grid step*/
+-    dst_cellsize_x = ABS(adfGeoTransform[1]) * virtual_grid_step_x;
+-    dst_cellsize_y = ABS(adfGeoTransform[5]) * virtual_grid_step_y;
++    dst_cellsize_x = MS_ABS(adfGeoTransform[1]) * virtual_grid_step_x;
++    dst_cellsize_y = MS_ABS(adfGeoTransform[5]) * virtual_grid_step_y;
+ 
+     /* Compute overlap between source and target views */
+ 
+diff -up mapserver-8.2.2/src/mapdrawgdal.c.orig mapserver-8.2.2/src/mapdrawgdal.c
+--- mapserver-8.2.2/src/mapdrawgdal.c.orig	2026-05-29 09:36:31.366842710 +0000
++++ mapserver-8.2.2/src/mapdrawgdal.c	2026-05-29 09:52:59.160596329 +0000
+@@ -595,7 +595,7 @@ int msDrawRasterLayerGDAL(mapObj *map, l
+ 
+       const int j =
+           bScaleColors
+-              ? MAX(0, MIN(255, (int)((i - dfScaleMin) * dfScaleRatio)))
++              ? MS_MAX(0, MS_MIN(255, (int)((i - dfScaleMin) * dfScaleRatio)))
+               : i;
+ 
+       pixel.red = sEntry.c1;
+@@ -673,7 +673,7 @@ int msDrawRasterLayerGDAL(mapObj *map, l
+       GDALGetColorEntryAsRGB(hColorMap, i, &sEntry);
+       const int j =
+           bScaleColors
+-              ? MAX(0, MIN(255, (int)((i - dfScaleMin) * dfScaleRatio)))
++              ? MS_MAX(0, MS_MIN(255, (int)((i - dfScaleMin) * dfScaleRatio)))
+               : i;
+ 
+       if (sEntry.c4 != 0 &&
+diff -up mapserver-8.2.2/src/mapogr.cpp.orig mapserver-8.2.2/src/mapogr.cpp
+--- mapserver-8.2.2/src/mapogr.cpp.orig	2026-05-29 09:37:42.862970862 +0000
++++ mapserver-8.2.2/src/mapogr.cpp	2026-05-29 10:03:39.054691135 +0000
+@@ -33,6 +33,8 @@
+ #include "mapproject.h"
+ #include "mapthread.h"
+ #include "mapows.h"
++
++#include <algorithm>
+ #include <string>
+ #include <vector>
+ 
+@@ -2232,10 +2234,10 @@ static int msOGRFileWhichShapes(layerObj
+      * no _efficient_ way to do that with OGR.
+      * ------------------------------------------------------------------ */
+     if (psInfo->rect_is_defined) {
+-      rect.minx = MAX(psInfo->rect.minx, rect.minx);
+-      rect.miny = MAX(psInfo->rect.miny, rect.miny);
+-      rect.maxx = MIN(psInfo->rect.maxx, rect.maxx);
+-      rect.maxy = MIN(psInfo->rect.maxy, rect.maxy);
++      rect.minx = std::max(psInfo->rect.minx, rect.minx);
++      rect.miny = std::max(psInfo->rect.miny, rect.miny);
++      rect.maxx = std::min(psInfo->rect.maxx, rect.maxx);
++      rect.maxy = std::min(psInfo->rect.maxy, rect.maxy);
+       bIsValidRect = true;
+     }
+     psInfo->rect = rect;
+diff -up mapserver-8.2.2/src/mapstring.cpp.orig mapserver-8.2.2/src/mapstring.cpp
+--- mapserver-8.2.2/src/mapstring.cpp.orig	2026-05-29 09:43:32.721597518 +0000
++++ mapserver-8.2.2/src/mapstring.cpp	2026-05-29 10:05:56.054926340 +0000
+@@ -2515,7 +2515,7 @@ int msStringBufferAppend(msStringBuffer
+   if (sb->length + nAppendLen >= sb->alloc_size) {
+     size_t newAllocSize1 = sb->alloc_size + sb->alloc_size / 3;
+     size_t newAllocSize2 = sb->length + nAppendLen + 1;
+-    size_t newAllocSize = MAX(newAllocSize1, newAllocSize2);
++    size_t newAllocSize = std::max(newAllocSize1, newAllocSize2);
+     void *newStr = realloc(sb->str, newAllocSize);
+     if (newStr == NULL) {
+       msSetError(MS_MEMERR, "Not enough memory", "msStringBufferAppend()");
+diff -up mapserver-8.2.2/src/mapwcs20.cpp.orig mapserver-8.2.2/src/mapwcs20.cpp
+--- mapserver-8.2.2/src/mapwcs20.cpp.orig	2026-05-29 09:39:14.041134292 +0000
++++ mapserver-8.2.2/src/mapwcs20.cpp	2026-05-29 10:10:25.847385938 +0000
+@@ -39,6 +39,7 @@
+ #include "mapows.h"
+ #include "mapwcs.h"
+ #include "mapgdal.h"
++#include <cmath>
+ #include <float.h>
+ #include "gdal.h"
+ #include "cpl_port.h"
+@@ -4645,14 +4646,16 @@ this request. Check wcs/ows_enable_reque
+           subsetInImageProj.maxy =
+               MS_MIN(subsetInImageProj.maxy, layer->extent.maxy);
+           {
+-            double total = ABS(layer->extent.maxx - layer->extent.minx);
+-            double part = ABS(subsetInImageProj.maxx - subsetInImageProj.minx);
++            double total = std::abs(layer->extent.maxx - layer->extent.minx);
++            double part =
++		std::abs(subsetInImageProj.maxx - subsetInImageProj.minx);
+             widthFromComputationInImageCRS =
+                 MS_NINT((part * map->width) / total);
+           }
+           {
+-            double total = ABS(layer->extent.maxy - layer->extent.miny);
+-            double part = ABS(subsetInImageProj.maxy - subsetInImageProj.miny);
++            double total = std::abs(layer->extent.maxy - layer->extent.miny);
++            double part =
++		std::abs(subsetInImageProj.maxy - subsetInImageProj.miny);
+             heightFromComputationInImageCRS =
+                 MS_NINT((part * map->height) / total);
+           }
+@@ -4714,10 +4717,10 @@ this request. Check wcs/ows_enable_reque
+   } else {
+     if (widthFromComputationInImageCRS != 0) {
+       params->width = widthFromComputationInImageCRS;
+-    } else if (ABS(bbox.maxx - bbox.minx) !=
+-               ABS(map->extent.maxx - map->extent.minx)) {
+-      double total = ABS(map->extent.maxx - map->extent.minx),
+-             part = ABS(bbox.maxx - bbox.minx);
++    } else if (std::abs(bbox.maxx - bbox.minx) !=
++               std::abs(map->extent.maxx - map->extent.minx)) {
++      double total = std::abs(map->extent.maxx - map->extent.minx),
++             part = std::abs(bbox.maxx - bbox.minx);
+       params->width = MS_NINT((part * map->width) / total);
+     } else {
+       params->width = map->width;
+@@ -4739,10 +4742,10 @@ this request. Check wcs/ows_enable_reque
+   } else {
+     if (heightFromComputationInImageCRS != 0) {
+       params->height = heightFromComputationInImageCRS;
+-    } else if (ABS(bbox.maxy - bbox.miny) !=
+-               ABS(map->extent.maxy - map->extent.miny)) {
+-      double total = ABS(map->extent.maxy - map->extent.miny),
+-             part = ABS(bbox.maxy - bbox.miny);
++    } else if (std::abs(bbox.maxy - bbox.miny) !=
++               std::abs(map->extent.maxy - map->extent.miny)) {
++      double total = std::abs(map->extent.maxy - map->extent.miny),
++             part = std::abs(bbox.maxy - bbox.miny);
+       params->height = MS_NINT((part * map->height) / total);
+     } else {
+       params->height = map->height;
