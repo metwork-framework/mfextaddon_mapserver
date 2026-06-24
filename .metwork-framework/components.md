@@ -6,4 +6,4 @@
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi) | 0.1.6 | mapserver |
 | [mapserverapi](https://github.com/metwork-framework/mapserverapi_python) | 8ee2658 | python3_mapserverapi |
 
-*(6 components)*
+*(5 components)*
