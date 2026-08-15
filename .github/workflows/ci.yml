@@ -66,7 +66,7 @@ jobs:
 
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.event.client_payload.branch || github.ref }}
@@ -98,13 +98,15 @@ jobs:
           TAG=${{ steps.SetVariables.outputs.tag }}
           DEP_BRANCH=${{ steps.SetVariables.outputs.dep_branch }}
           BUILDIMAGE=${{ steps.SetVariables.outputs.buildimage }}
+          TOKEN=${{ secrets.METWORK_ACCESS_TOKEN }}
           docker pull ${BUILDIMAGE}
-          docker run ${DOCKER_RUN_OPTIONS} -e TARGET_DIR=${TARGET_DIR} -e BRANCH=${BRANCH} -e DEP_BRANCH=${DEP_BRANCH} -e TAG=${TAG} -e OS_VERSION=${OS_VERSION} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
+          docker run ${DOCKER_RUN_OPTIONS} -e TOKEN=${TOKEN} -e TARGET_DIR=${TARGET_DIR} -e BRANCH=${BRANCH} -e DEP_BRANCH=${DEP_BRANCH} -e TAG=${TAG} -e OS_VERSION=${OS_VERSION} --rm ${BUILDIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/build.sh"
           cat  ${{ github.workspace }}/github_output >> ${GITHUB_OUTPUT}
 
       - name: publish buildlogs
         if: ${{ github.event_name != 'pull_request' && steps.SetVariables.outputs.branch != 'null' }}
-        uses: thebaptiste/ssh-scp-ssh-pipelines@metwork
+        uses: yitianyigexiangfa/ssh-scp-ssh-pipelines@v1.1.6
+        continue-on-error: true
         env:
           REMOTE: ${{ steps.SetVariables.outputs.buildlog_dir }}
           LOCAL: ${{ github.workspace }}/buildlogs
@@ -128,7 +130,7 @@ jobs:
           docker run ${DOCKER_RUN_OPTIONS} -e DEP_BRANCH=${DEP_BRANCH} -e BRANCH=${BRANCH} -e OS_VERSION=${OS_VERSION} --rm ${TESTIMAGE} /bin/bash -c "${DOCKER_WORKFLOW_SCRIPTS_DIR}/integration_tests.sh"
       - name: publish rpms
         if: ${{ github.event_name != 'pull_request' && steps.BuildStep.outputs.bypass == 'false' && steps.SetVariables.outputs.branch != 'null' }}
-        uses: thebaptiste/ssh-scp-ssh-pipelines@metwork
+        uses: yitianyigexiangfa/ssh-scp-ssh-pipelines@v1.1.6
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
           LOCAL: ${{ github.workspace }}/rpms
@@ -143,7 +145,7 @@ jobs:
             '${LOCAL}/metwork-*.rpm' => ${REMOTE}
       - name: createrepo
         if: ${{ github.event_name != 'pull_request' && steps.BuildStep.outputs.bypass == 'false' && steps.SetVariables.outputs.branch != 'null' }}
-        uses: thebaptiste/ssh-scp-ssh-pipelines@metwork
+        uses: yitianyigexiangfa/ssh-scp-ssh-pipelines@v1.1.6
         env:
           REMOTE: ${{ steps.SetVariables.outputs.rpm_dir }}
           LOCAL: ${{ github.workspace }}/.github/workflows
@@ -160,7 +162,7 @@ jobs:
             ./createrepo.sh .
       - name: publish doc
         if: ${{ github.event_name != 'pull_request' && steps.BuildStep.outputs.bypass == 'false' && steps.SetVariables.outputs.branch != 'null' }}
-        uses: thebaptiste/ssh-scp-ssh-pipelines@metwork
+        uses: yitianyigexiangfa/ssh-scp-ssh-pipelines@v1.1.6
         continue-on-error: true
         env:
           REMOTE: ${{ steps.SetVariables.outputs.doc_dir }}

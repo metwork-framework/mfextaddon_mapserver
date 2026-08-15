@@ -112,11 +112,9 @@ pull_request_rules:
     actions:
       merge:
         method: squash
-        commit_message_template: |-
-          {{ title }} (#{{ number }})
-
-          {{ body }}
-      delete_head_branch: {}
+        commit_message_format:
+          title: pr-title
+          body: pr-body
     conditions:
 
       - base!=master
@@ -126,11 +124,7 @@ pull_request_rules:
       - "#approved-reviews-by>=1"
       - -title~=(WIP|wip)
       - "label!=Status: Blocked"
-      - "title~=^(build|chore|ci|docs|style|refactor|perf|test|fix|fea\
-        t|fix|feat|feat!|fix!)(\\([a-z]+\\))?: .*$"
-
-      - status-success=license/cla
-
+      - "title~=^(build|chore|ci|docs|style|refactor|perf|test|fix|feat|feat!|fix!)(\\([a-z]+\\))?: .*$"
   - name: change title
     actions:
       comment:
@@ -140,7 +134,7 @@ pull_request_rules:
           => you have to change the PR title to match conventional commit specification:
 
           ```
-          regex: ^(build|chore|ci|docs|style|refactor|perf|test|fix|feat|fix|feat|feat!|fix!)(\([a-z]+\))?: .*$
+          regex: ^(build|chore|ci|docs|style|refactor|perf|test|fix|feat|feat!|fix!)(\([a-z]+\))?: .*$
           ```
 
           As the title will be used for the commit message (and so for changelog entry if `feat:` or `fix:`).
@@ -153,11 +147,7 @@ pull_request_rules:
       - "#approved-reviews-by>=1"
       - -title~=(WIP|wip)
       - "label!=Status: Blocked"
-      - "-title~=^(build|chore|ci|docs|style|refactor|perf|test|fix|fe\
-        at|fix|feat|feat!|fix!)(\\([a-z]+\\))?: .*$"
-
-      - status-success=license/cla
-
+      - "-title~=^(build|chore|ci|docs|style|refactor|perf|test|fix|feat|feat!|fix!)(\\([a-z]+\\))?: .*$"
   - name: buildbot auto merges
     actions:
       review:
